@@ -15,10 +15,10 @@ class Connection:
         return self.host + ':' + str(self.port)
 
     def recv(self, n):
-        return self.socket.recv(n)
+        return json.loads(self.socket.recv(n).decode())
 
     def sendall(self, data):
-        return self.socket.sendall(data)
+        return self.socket.sendall(json.dumps(data).encode())
 
     def close(self):
         return self.socket.close()
@@ -45,28 +45,27 @@ class Server:
         elif self.status == 'down':
             self.message(mes)
             msg = {
-                'status': self.status,
+                'status': 'down',
                 'msg': mes
             }
-        out.sendall(json.dumps(msg).encode())
+        out.sendall(msg)
 
     def handle(self, conn):
         while True:
             self.status = 'ok'
-            # TODO: Add an exception for unexpected target socket close
-            data = conn.recv(1024).decode()
-            if not data:
+            try:
+                data = conn.recv(1024)
+            except:
                 self.status = 'fail'
-                self.message('Error: empty data recieved!')
+                self.message('Error recieving data from {}.'.format(conn.str_info()))
                 break
 
-            data = json.loads(data)
             if data['act'] == 'close':
                 self.status = 'close'
                 break
             elif data['act'] == 'shutdown':
                 self.status = 'warn'
-                self.message('{} server shutdown attempt.'.format(conn.str_info()))
+                self.message('Server shutdown attempt from {}.'.format(conn.str_info()))
                 try:
                     if data['pass'] == 'SheparD':
                         self.status = 'ok'
@@ -79,7 +78,7 @@ class Server:
                 except KeyError:
                     self.response(conn, 'No password provided.')
             elif data['act'] == 'echo':
-                self.message('Echo requested from {}:'.format(conn.str_info()))
+                self.message('Echo requested from {}'.format(conn.str_info()))
                 mes = ''
                 try:
                     print(str(data['val']))
