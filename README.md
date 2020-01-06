@@ -13,4 +13,4 @@ Folder `server` holds everithing for the server run and `client` contains client
 - [ ] Multi-threading connections handling.
 
 ## Contributors
-@SheparD
+**CmmSheparD**
