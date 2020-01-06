@@ -61,7 +61,6 @@ class Server:
                 break
 
             if data['act'] == 'close':
-                self.status = 'close'
                 break
             elif data['act'] == 'shutdown':
                 self.status = 'warn'
