@@ -1,0 +1,20 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+[*.py]
+indent_style = spaces
+indent_width = 4
+max_line_length = 79
+
+[*.json]
+indent_style = spaces
+indent_width = 2
+insert_final_newline = false
+
+[*.txt]
+insert_final_newline = false
